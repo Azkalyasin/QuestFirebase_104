@@ -7,12 +7,13 @@ import kotlinx.coroutines.tasks.await
 interface RepositorySiswa {
     suspend fun getDataSiswa(): List<Siswa>
     suspend fun postDataSiswa(siswa: Siswa)
-    suspend fun getSatuSiswa(id: Long): Siswa
+    suspend fun getSatuSiswa(id: Long): Siswa?
     suspend fun editSatuSiswa(id: Long, siswa: Siswa)
     suspend fun hapusSatuSiswa(id: Long)
 }
 
 class FirebaseRepositorySiswa : RepositorySiswa {
+
     private val db = FirebaseFirestore.getInstance()
     private val collection = db.collection("siswa")
 
@@ -32,7 +33,7 @@ class FirebaseRepositorySiswa : RepositorySiswa {
     }
 
     override suspend fun postDataSiswa(siswa: Siswa) {
-        val docRef = if (siswa.id == 0L) collection.document() else collection.document(siswa.id.toString())
+        val docRef = collection.document()
         val data = hashMapOf(
             "id" to (siswa.id.takeIf { it != 0L } ?: docRef.id.hashCode()),
             "nama" to siswa.nama,
@@ -41,6 +42,7 @@ class FirebaseRepositorySiswa : RepositorySiswa {
         )
         docRef.set(data).await()
     }
+
     override suspend fun getSatuSiswa(id: Long): Siswa? {
         return try {
             val query = collection.whereEqualTo("id", id).get().await()
@@ -61,6 +63,7 @@ class FirebaseRepositorySiswa : RepositorySiswa {
     override suspend fun editSatuSiswa(id: Long, siswa: Siswa) {
         val docQuery = collection.whereEqualTo("id", id).get().await()
         val docId = docQuery.documents.firstOrNull()?.id ?: return
+
         collection.document(docId).set(
             mapOf(
                 "id" to siswa.id,
@@ -76,5 +79,4 @@ class FirebaseRepositorySiswa : RepositorySiswa {
         val docId = docQuery.documents.firstOrNull()?.id ?: return
         collection.document(docId).delete().await()
     }
-
 }
