@@ -1,5 +1,30 @@
 package com.example.p14.view
 
+import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
+
+import com.example.p14.R
+import com.example.p14.modeldata.Siswa
+import com.example.p14.viewmodel.DetailViewModel
+import com.example.p14.viewmodel.provider.PenyediaViewModel
+import com.example.p14.viewmodel.StatusUIDetail
+import com.example.p14.view.route.DestinasiDetail
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailSiswaScreen(
@@ -38,7 +63,7 @@ fun DetailSiswaScreen(
         modifier = modifier
     ) { innerPadding ->
         val coroutineScope = rememberCoroutineScope()
-        BodyDetailSiswa(
+        BodyDetailDataSiswa(
             statusUIDetail = viewModel.statusUIDetail,
             onDelete = {
                 coroutineScope.launch {
